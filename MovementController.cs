@@ -9,7 +9,6 @@ namespace DestinyBlade
         [SerializeField] private SpriteRenderer _playerSpriteRenderer;
         [SerializeField] private Sensor _groundSensor;
         [SerializeField] private AttackPoint _playerAttackPoint;
-        [SerializeField] private float _attackRate;
 
         private Vector2 _attackPointPosition;
 
@@ -62,7 +61,7 @@ namespace DestinyBlade
         {
             GetAttackPointPosition();
 
-            if (_isAttacking || _isRolling || _player.IsBlocking) return;
+            if (_attackTimer >= 0 || _isRolling || _player.IsBlocking) return;
 
             if (Input.GetKey(KeyCode.D) == true)
             {
@@ -101,7 +100,7 @@ namespace DestinyBlade
 
         private void Jump()
         {
-            if (_isAttacking || _isRolling) return;
+            if (_attackTimer >= 0 || _isRolling) return;
 
             if (Input.GetKeyDown(KeyCode.Space) == true && _groundSensor.IsTriggered == true)
             {
@@ -133,7 +132,7 @@ namespace DestinyBlade
                 return;
             }
 
-            if (_isAttacking) return;
+            if (_attackTimer >= 0) return;
 
             if (Input.GetKeyDown(KeyCode.LeftShift) == true && _groundSensor.IsTriggered == true)
             {
@@ -158,7 +157,7 @@ namespace DestinyBlade
 
         private void Attack()
         {
-            if (_attackTimer > 0)
+            if (_attackTimer >= 0)
             {
                 _attackTimer -= Time.deltaTime;
 
@@ -183,7 +182,7 @@ namespace DestinyBlade
             {
                 if (_player.StaminaUsage() == false) return;
 
-                _attackTimer = _attackRate;
+                _attackTimer = _player.AttackRate;
 
                 _currentAttack++;
 
@@ -205,11 +204,10 @@ namespace DestinyBlade
         {
             _player.IsBlocking = false;
 
-            if (_attackTimer > 0 || _isRolling) return;
+            if (_attackTimer >= 0 || _isRolling) return;
 
             if (Input.GetMouseButton(1) == true && _groundSensor.IsTriggered == true)
             {
-                Debug.Log("a");
                 _playerAnimator.SetBool("isBlocking",true);
 
                 _player.IsBlocking = true;
