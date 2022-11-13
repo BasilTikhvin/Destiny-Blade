@@ -20,7 +20,6 @@ namespace DestinyBlade
             foreach (Collider2D enemy in hitEnemies)
             {
                 _targetFighter = enemy.transform.root.GetComponent<Fighter>();
-                _targetOther = enemy.transform.root.GetComponent<Destructible>();
 
                 if (_targetFighter != null)
                 {
@@ -29,19 +28,20 @@ namespace DestinyBlade
                         if (_targetFighter.StaminaUsage() == true) return;
 
                         _targetFighter.TakeDamage(_attackDamage * damageMultuplier);
-
-                        return;
                     }
                     else
                     {
                         _targetFighter.TakeDamage(_attackDamage * damageMultuplier);
-
-                        return;
                     }    
                 }
-                else if (_targetOther != null)
+                else
                 {
-                    _targetOther.TakeDamage(_attackDamage * damageMultuplier);
+                    _targetOther = enemy.transform.root.GetComponent<Destructible>();
+
+                    if (_targetOther != null)
+                    {
+                        _targetOther.TakeDamage(_attackDamage * damageMultuplier);
+                    }
                 }
             }
         }
