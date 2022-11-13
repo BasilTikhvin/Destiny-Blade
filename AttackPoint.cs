@@ -25,9 +25,10 @@ namespace DestinyBlade
                 {
                     if (_targetFighter.IsBlocking && _targetFighter.FaceDirection != attackerFaceDirection)
                     {
-                        if (_targetFighter.StaminaUsage() == true) return;
-
-                        _targetFighter.TakeDamage(_attackDamage * damageMultuplier);
+                        if (_targetFighter.StaminaUsage() == true)
+                        {
+                            _targetFighter.TakeDamage(_attackDamage * damageMultuplier);
+                        }
                     }
                     else
                     {
