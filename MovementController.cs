@@ -9,6 +9,7 @@ namespace DestinyBlade
         [SerializeField] private SpriteRenderer _playerSpriteRenderer;
         [SerializeField] private Sensor _groundSensor;
         [SerializeField] private AttackPoint _playerAttackPoint;
+        [SerializeField] private float _attackRate;
 
         private Vector2 _attackPointPosition;
 
@@ -17,7 +18,7 @@ namespace DestinyBlade
 
         private float _rollTime;
         private int _currentAttack;
-        private float _timeAfterAttack;
+        private float _attackTimer;
 
         private void Start()
         {
@@ -119,8 +120,6 @@ namespace DestinyBlade
 
         private void Roll()
         {
-            if (_isAttacking) return;
-
             if (_rollTime > 1.0f)
             {
                 _player.RollDirection = 0;
@@ -133,6 +132,8 @@ namespace DestinyBlade
 
                 return;
             }
+
+            if (_isAttacking) return;
 
             if (Input.GetKeyDown(KeyCode.LeftShift) == true && _groundSensor.IsTriggered == true)
             {
@@ -157,39 +158,42 @@ namespace DestinyBlade
 
         private void Attack()
         {
-            if (_isRolling) return;
-
-            if (_timeAfterAttack > 1.0f)
+            if (_attackTimer > 0)
             {
-                _isAttacking = false;
-            }
-            else
-            {
-                _timeAfterAttack += Time.deltaTime;
+                _attackTimer -= Time.deltaTime;
 
-                if (_timeAfterAttack > 0.6f)
+                if (_attackTimer < 0.6f)
+                {
+                    if (_isAttacking)
+                    {
+                        _playerAttackPoint.MeleeAttack(_currentAttack);
+                    }
+
+                    _isAttacking = false;
+                }
+                if (_attackTimer < 0.4f)
                 {
                     _currentAttack = 0;
                 }
             }
 
-            if (Input.GetMouseButtonDown(0) == true && _timeAfterAttack > 0.4f && _groundSensor.IsTriggered == true)
+            if (_isRolling || _isAttacking) return;
+
+            if (Input.GetMouseButtonDown(0) == true && _groundSensor.IsTriggered == true)
             {
                 if (_player.StaminaUsage() == false) return;
 
-                _timeAfterAttack = 0;
+                _attackTimer = _attackRate;
 
                 _currentAttack++;
 
-                if (_currentAttack > _player.MaxAttackCombo)
+                if (_currentAttack > _player.MaxAttackCombo || _currentAttack == 0)
                 {
-                    _currentAttack = 0;
+                    _currentAttack = 1;
                 }
 
                 if (_currentAttack >= 1)
                 {
-                    _playerAttackPoint.Attack(_currentAttack);
-
                     _playerAnimator.SetTrigger("attack" + _currentAttack);
 
                     _isAttacking = true;
@@ -201,10 +205,11 @@ namespace DestinyBlade
         {
             _player.IsBlocking = false;
 
-            if (_isAttacking || _isRolling) return;
+            if (_attackTimer > 0 || _isRolling) return;
 
             if (Input.GetMouseButton(1) == true && _groundSensor.IsTriggered == true)
             {
+                Debug.Log("a");
                 _playerAnimator.SetBool("isBlocking",true);
 
                 _player.IsBlocking = true;

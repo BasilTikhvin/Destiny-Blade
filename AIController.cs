@@ -17,6 +17,7 @@ namespace DestinyBlade
         [SerializeField] private AttackPoint _npcAttackPoint;
         [SerializeField] private float _attackRate;
         [SerializeField] private Sensor _groundSensor;
+        [SerializeField] private float _minMoveStamina;
 
         private Fighter _npc;
         private Animator _npcAnimator;
@@ -28,7 +29,7 @@ namespace DestinyBlade
         private RaycastHit2D _npcSight;
         private Destructible _attackTarget;
         private Vector2 _attackPointPosition;
-        private float _timeAfterAttack;
+        private float _attackTimer;
 
         private bool _isAttacking;
 
@@ -125,7 +126,7 @@ namespace DestinyBlade
 
         private void ActionFindAttackTarget()
         {
-            _npcSight = Physics2D.Raycast(transform.position, transform.position + (transform.right * _npcSightDistance * _npc.FaceDirection), 5, _enemyLayerMask);
+            _npcSight = Physics2D.Raycast(transform.position, transform.position + (_npc.FaceDirection * _npcSightDistance * transform.right), 5, _enemyLayerMask);
 
             if (_npcSight)
             {
@@ -140,7 +141,7 @@ namespace DestinyBlade
 
         private void ActionMove()
         {
-            if (_isAttacking || _npc.IsBlocking) return;
+            if (_isAttacking || _npc.IsBlocking || _npc.CurrentStamina < _minMoveStamina) return;
 
             if ((_movePoint.x - _npc.transform.position.x) > 0)
             {
@@ -167,15 +168,18 @@ namespace DestinyBlade
 
         private void ActionAttack()
         {
-            if (_isAttacking)
+            if (_attackTimer > 0)
             {
-                _timeAfterAttack += Time.deltaTime;
+                _attackTimer -= Time.deltaTime;
 
-                if (_timeAfterAttack >= _attackRate)
+                if (_attackTimer <= _attackRate / 2)
                 {
-                    _isAttacking = false;
+                    if (_isAttacking)
+                    {
+                        _npcAttackPoint.MeleeAttack(_npc.MaxAttackCombo);
+                    }
 
-                    _npcAttackPoint.Attack(_npc.MaxAttackCombo);
+                    _isAttacking = false;
                 }
                 return;
             }
@@ -186,7 +190,7 @@ namespace DestinyBlade
             {
                 if (_npc.StaminaUsage() == false) return;
 
-                _timeAfterAttack = 0;
+                _attackTimer = _attackRate;
 
                 _npcAnimator.SetTrigger("attack");
 
