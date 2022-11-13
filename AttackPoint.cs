@@ -6,14 +6,14 @@ namespace DestinyBlade
     public class AttackPoint : MonoBehaviour
     {
         [SerializeField] private LayerMask _enemyLayerMask;
-        [SerializeField] private int attackDamage;
+        [SerializeField] private int _attackDamage;
         [SerializeField] private float _attackRangeRadius;
         public float AttackRangeRadius => _attackRangeRadius;
 
         private Fighter _targetFighter;
         private Destructible _targetOther;
 
-        public void Attack(int damageMultuplier)
+        public void MeleeAttack(int damageMultuplier, int attackerFaceDirection)
         {
             Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, _attackRangeRadius, _enemyLayerMask);
 
@@ -24,24 +24,24 @@ namespace DestinyBlade
 
                 if (_targetFighter != null)
                 {
-                    if (_targetFighter.IsBlocking)
+                    if (_targetFighter.IsBlocking && _targetFighter.FaceDirection != attackerFaceDirection)
                     {
                         if (_targetFighter.StaminaUsage() == true) return;
 
-                        _targetFighter.TakeDamage(attackDamage * damageMultuplier);
+                        _targetFighter.TakeDamage(_attackDamage * damageMultuplier);
 
                         return;
                     }
                     else
                     {
-                        _targetFighter.TakeDamage(attackDamage * damageMultuplier);
+                        _targetFighter.TakeDamage(_attackDamage * damageMultuplier);
 
                         return;
                     }    
                 }
                 else if (_targetOther != null)
                 {
-                    _targetOther.TakeDamage(attackDamage * damageMultuplier);
+                    _targetOther.TakeDamage(_attackDamage * damageMultuplier);
                 }
             }
         }

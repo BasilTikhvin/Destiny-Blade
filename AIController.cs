@@ -13,10 +13,9 @@ namespace DestinyBlade
         [SerializeField] private AIType _behaviourType;
         [SerializeField] private LayerMask _enemyLayerMask;
         [SerializeField] private PatrolPoint[] _patrolRoute;
-        [SerializeField] private float _npcSightDistance;
         [SerializeField] private AttackPoint _npcAttackPoint;
-        [SerializeField] private float _attackRate;
         [SerializeField] private Sensor _groundSensor;
+        [SerializeField] private float _npcSightDistance;
         [SerializeField] private float _minMoveStamina;
 
         private Fighter _npc;
@@ -30,8 +29,6 @@ namespace DestinyBlade
         private Destructible _attackTarget;
         private Vector2 _attackPointPosition;
         private float _attackTimer;
-
-        private bool _isAttacking;
 
         private void Start()
         {
@@ -112,6 +109,34 @@ namespace DestinyBlade
 
             ActionMove();
         }
+
+        private void ActionMove()
+        {
+            if (_npc.IsAttacking || _npc.IsBlocking || _npc.CurrentStamina < _minMoveStamina) return;
+
+            if ((_movePoint.x - _npc.transform.position.x) > 0)
+            {
+                _npc.HorizontalDirection = 1;
+
+                _npc.FaceDirection = 1;
+
+                _npcSpriteRenderer.flipX = true;
+
+                _npcAnimator.SetBool("isRunning", true);
+            }
+
+            if ((_movePoint.x - _npc.transform.position.x) < 0)
+            {
+                _npc.HorizontalDirection = -1;
+
+                _npc.FaceDirection = -1;
+
+                _npcSpriteRenderer.flipX = false;
+
+                _npcAnimator.SetBool("isRunning", true);
+            }
+        }
+
         private void ActionGetAttackPointPosition()
         {
             if (_npc.FaceDirection == -1)
@@ -139,47 +164,20 @@ namespace DestinyBlade
             }
         }
 
-        private void ActionMove()
-        {
-            if (_isAttacking || _npc.IsBlocking || _npc.CurrentStamina < _minMoveStamina) return;
-
-            if ((_movePoint.x - _npc.transform.position.x) > 0)
-            {
-                _npc.HorizontalDirection = 1;
-
-                _npc.FaceDirection = 1;
-
-                _npcSpriteRenderer.flipX = true;
-
-                _npcAnimator.SetBool("isRunning", true);
-            }
-
-            if ((_movePoint.x - _npc.transform.position.x) < 0)
-            {
-                _npc.HorizontalDirection = -1;
-
-                _npc.FaceDirection = -1;
-
-                _npcSpriteRenderer.flipX = false;
-
-                _npcAnimator.SetBool("isRunning", true);
-            }
-        }
-
         private void ActionAttack()
         {
-            if (_attackTimer > 0)
+            if (_attackTimer >= 0)
             {
                 _attackTimer -= Time.deltaTime;
 
-                if (_attackTimer <= _attackRate / 2)
+                if (_attackTimer <= _npc.AttackRate / 2)
                 {
-                    if (_isAttacking)
+                    if (_npc.IsAttacking)
                     {
-                        _npcAttackPoint.MeleeAttack(_npc.MaxAttackCombo);
+                        _npcAttackPoint.MeleeAttack(_npc.MaxAttackCombo, _npc.FaceDirection);
                     }
 
-                    _isAttacking = false;
+                    _npc.IsAttacking = false;
                 }
                 return;
             }
@@ -190,11 +188,11 @@ namespace DestinyBlade
             {
                 if (_npc.StaminaUsage() == false) return;
 
-                _attackTimer = _attackRate;
+                _attackTimer = _npc.AttackRate;
 
                 _npcAnimator.SetTrigger("attack");
 
-                _isAttacking = true;
+                _npc.IsAttacking = true;
             }
         }
 
@@ -202,7 +200,7 @@ namespace DestinyBlade
         {
             _npc.IsBlocking = false;
 
-            if (_isAttacking) return;
+            if (_attackTimer >= 0) return;
 
             if (Input.GetMouseButton(1) == true && _groundSensor.IsTriggered == true)
             {

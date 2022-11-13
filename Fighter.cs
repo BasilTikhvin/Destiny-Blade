@@ -11,25 +11,27 @@ namespace DestinyBlade
         [SerializeField] private float _staminaUsageValue;
         [SerializeField] private float _staminaRecoveryPerSecond;
         [SerializeField] private float _staminaRecoveryDelay;
-        [Header("Physics")]
-        [SerializeField] private float _moveSpeed;
-        [SerializeField] private float _jumpForce;
-        [SerializeField] private float _rollForce;
-        [Header("Combat")]
-        [SerializeField] private int _maxAttackCombo;
-        public int MaxAttackCombo => _maxAttackCombo;
-        public bool IsBlocking { get; set; }
-
         private float _currentStamina;
         public float CurrentStamina => _currentStamina;
         private float _staminaRecoveryTimer;
 
-        public float FaceDirection { get; set; }
-        public float HorizontalDirection { get; set; }
-        public float VerticalDirection { get; set; }
-        public float RollDirection { get; set; }
-
+        [Header("Physics")]
+        [SerializeField] private float _moveSpeed;
+        [SerializeField] private float _jumpForce;
+        [SerializeField] private float _rollForce;
+        public int FaceDirection { get; set; }
+        public int HorizontalDirection { get; set; }
+        public int VerticalDirection { get; set; }
+        public int RollDirection { get; set; }
         private Rigidbody2D _rigidbody;
+
+        [Header("Combat")]
+        [SerializeField] private float _attackRate;
+        public float AttackRate => _attackRate;
+        [SerializeField] private int _maxAttackCombo;
+        public int MaxAttackCombo => _maxAttackCombo;
+        public bool IsAttacking { get; set; }
+        public bool IsBlocking { get; set; }
 
         protected override void Start()
         {
@@ -51,11 +53,11 @@ namespace DestinyBlade
 
         private void UpdateRigidbody()
         {
-            _rigidbody.velocity = new Vector2(HorizontalDirection * _moveSpeed * Time.fixedDeltaTime, _rigidbody.velocity.y);
+            _rigidbody.velocity = new Vector2(_moveSpeed * HorizontalDirection * Time.fixedDeltaTime, _rigidbody.velocity.y);
 
-            _rigidbody.AddForce(VerticalDirection * transform.up * _jumpForce * Time.fixedDeltaTime, ForceMode2D.Impulse);
+            _rigidbody.AddForce(_jumpForce * VerticalDirection * Time.fixedDeltaTime * transform.up, ForceMode2D.Impulse);
 
-            _rigidbody.AddForce(RollDirection * transform.right * _rollForce * Time.fixedDeltaTime, ForceMode2D.Impulse);
+            _rigidbody.AddForce(_rollForce * RollDirection * Time.fixedDeltaTime * transform.right, ForceMode2D.Impulse);
         }
 
         private void StaminaRecovery()
