@@ -17,6 +17,7 @@ namespace DestinyBlade
 
         [Header("Physics")]
         [SerializeField] private float _moveSpeed;
+        [SerializeField] private float _maxMoveSpeed;
         [SerializeField] private float _jumpForce;
         [SerializeField] private float _rollForce;
         public int FaceDirection { get; set; }
@@ -40,8 +41,6 @@ namespace DestinyBlade
             _currentStamina = _maxStamina;
 
             _rigidbody = transform.root.GetComponent<Rigidbody2D>();
-
-            FaceDirection = 1;
         }
 
         private void FixedUpdate()
@@ -53,11 +52,11 @@ namespace DestinyBlade
 
         private void UpdateRigidbody()
         {
-            _rigidbody.velocity = new Vector2(_moveSpeed * HorizontalDirection * Time.fixedDeltaTime, _rigidbody.velocity.y);
+            _rigidbody.AddForce(new Vector2(HorizontalDirection * _moveSpeed * Time.fixedDeltaTime, 0));
+            _rigidbody.AddForce(new Vector2(-_rigidbody.velocity.x * (_moveSpeed - _maxMoveSpeed) * Time.fixedDeltaTime, 0));
 
-            _rigidbody.AddForce(_jumpForce * VerticalDirection * Time.fixedDeltaTime * transform.up, ForceMode2D.Impulse);
-
-            _rigidbody.AddForce(_rollForce * RollDirection * Time.fixedDeltaTime * transform.right, ForceMode2D.Impulse);
+            _rigidbody.AddForce(new Vector2(0, _jumpForce * VerticalDirection));
+            _rigidbody.AddForce(new Vector2(_rollForce * RollDirection, 0));
         }
 
         private void StaminaRecovery()

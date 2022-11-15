@@ -6,11 +6,10 @@ namespace DestinyBlade
     {
         [SerializeField] private Fighter _player;
         [SerializeField] private Animator _playerAnimator;
-        [SerializeField] private SpriteRenderer _playerSpriteRenderer;
         [SerializeField] private Sensor _groundSensor;
         [SerializeField] private AttackPoint _playerAttackPoint;
 
-        private Vector2 _attackPointPosition;
+        private Transform _playerTransform;
 
         private int _currentAttack;
         private float _attackTimer;
@@ -19,7 +18,9 @@ namespace DestinyBlade
 
         private void Start()
         {
-            _attackPointPosition = _playerAttackPoint.transform.localPosition;
+            _playerTransform = _player.GetComponent<Transform>();
+
+            enabled = true;
 
             //_target.EventOnDeath.AddListener(OnDeath);
         }
@@ -46,6 +47,15 @@ namespace DestinyBlade
 
         private void Idle()
         {
+            if (_playerTransform.localScale.x == 1)
+            {
+                _player.FaceDirection = 1;
+            }
+            else
+            {
+                _player.FaceDirection = -1;
+            }
+
             _player.HorizontalDirection = 0;
 
             _playerAnimator.SetBool("isRunning", false);
@@ -57,42 +67,28 @@ namespace DestinyBlade
 
         private void Run()
         {
-            GetAttackPointPosition();
-
             if (_attackTimer >= 0 || _rollTimer >= 0f || _player.IsBlocking) return;
 
             if (Input.GetKey(KeyCode.D) == true)
             {
-                _player.HorizontalDirection = 1;
-
                 _player.FaceDirection = 1;
 
-                _playerSpriteRenderer.flipX = false;
+                _player.HorizontalDirection = 1;
+
+                _playerTransform.localScale = new Vector3(1, 1, 1);
 
                 _playerAnimator.SetBool("isRunning", true);
             }
 
             if (Input.GetKey(KeyCode.A) == true)
             {
-                _player.HorizontalDirection = -1;
-
                 _player.FaceDirection = -1;
 
-                _playerSpriteRenderer.flipX = true;
+                _player.HorizontalDirection = -1;
+
+                _playerTransform.localScale = new Vector3(-1, 1, 1);
 
                 _playerAnimator.SetBool("isRunning", true);
-            }
-        }
-
-        private void GetAttackPointPosition()
-        {
-            if (_player.FaceDirection == 1)
-            {
-                _playerAttackPoint.transform.localPosition = new Vector2(_attackPointPosition.x, _attackPointPosition.y);
-            }
-            else
-            {
-                _playerAttackPoint.transform.localPosition = new Vector2(-_attackPointPosition.x, _attackPointPosition.y);
             }
         }
 
@@ -121,11 +117,12 @@ namespace DestinyBlade
             {
                 _rollTimer -= Time.deltaTime;
 
+                if (_rollTimer <= 0.5f)
+                {
+                    _player.RollDirection = 0;
+                }
+
                 return;
-            }
-            else
-            {
-                _player.RollDirection = 0;
             }
 
             if (_attackTimer >= 0) return;
@@ -136,7 +133,7 @@ namespace DestinyBlade
 
                 _rollTimer = 1f;
 
-                if (_playerSpriteRenderer.flipX == false)
+                if (_playerTransform.localScale.x == 1)
                 {
                     _player.RollDirection = 1;
                 }
@@ -176,6 +173,8 @@ namespace DestinyBlade
             {
                 if (_player.StaminaUsage() == false) return;
 
+                _player.IsAttacking = true;
+
                 _attackTimer = _player.AttackRate;
 
                 _currentAttack++;
@@ -185,12 +184,7 @@ namespace DestinyBlade
                     _currentAttack = 1;
                 }
 
-                if (_currentAttack >= 1)
-                {
-                    _playerAnimator.SetTrigger("attack" + _currentAttack);
-
-                    _player.IsAttacking = true;
-                }
+                _playerAnimator.SetTrigger("attack" + _currentAttack);
             }
         }
 

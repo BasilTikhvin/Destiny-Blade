@@ -18,16 +18,16 @@ namespace DestinyBlade
         [SerializeField] private float _npcSightDistance;
         [SerializeField] private float _minMoveStamina;
 
+        private Transform _npcTransform;
+
         private Fighter _npc;
         private Animator _npcAnimator;
-        private SpriteRenderer _npcSpriteRenderer;
 
         private int _nextPatrolPoint;
         private Vector2 _movePoint;
 
         private RaycastHit2D _npcSight;
-        private Destructible _attackTarget;
-        private Vector2 _attackPointPosition;
+        private Fighter _attackTarget;
         private float _attackTimer;
 
         private void Start()
@@ -35,13 +35,8 @@ namespace DestinyBlade
             _npc = transform.GetComponent<Fighter>();
             _npc.EventOnDeath.AddListener(ActionOnDeath);
 
+            _npcTransform = transform.GetComponent<Transform>();
             _npcAnimator = transform.GetComponentInChildren<Animator>();
-            _npcSpriteRenderer = transform.GetComponentInChildren<SpriteRenderer>();
-
-            if (_npcAttackPoint != null)
-            {
-                _attackPointPosition = _npcAttackPoint.transform.localPosition;
-            }
         }
 
         private void Update()
@@ -53,11 +48,13 @@ namespace DestinyBlade
             ActionFindAttackTarget();
 
             ActionAttack();
+
+            //ActionBlock();
         }
 
         private void ActionIdle()
         {
-            if (_npcSpriteRenderer.flipX == true)
+            if (_npcTransform.localScale.x == 1)
             {
                 _npc.FaceDirection = 1;
             }
@@ -77,8 +74,6 @@ namespace DestinyBlade
 
         private void ActionUpdateMovePoint()
         {
-            ActionGetAttackPointPosition();
-
             if (_attackTarget != null)
             {
                 _movePoint = _attackTarget.transform.position + (transform.right * _npc.FaceDirection);
@@ -116,36 +111,24 @@ namespace DestinyBlade
 
             if ((_movePoint.x - _npc.transform.position.x) > 0)
             {
-                _npc.HorizontalDirection = 1;
-
                 _npc.FaceDirection = 1;
 
-                _npcSpriteRenderer.flipX = true;
+                _npc.HorizontalDirection = 1;
+
+                _npcTransform.localScale = new Vector3(1, 1, 1);
 
                 _npcAnimator.SetBool("isRunning", true);
             }
 
             if ((_movePoint.x - _npc.transform.position.x) < 0)
             {
-                _npc.HorizontalDirection = -1;
-
                 _npc.FaceDirection = -1;
 
-                _npcSpriteRenderer.flipX = false;
+                _npc.HorizontalDirection = -1;
+
+                _npcTransform.localScale = new Vector3(-1, 1, 1);
 
                 _npcAnimator.SetBool("isRunning", true);
-            }
-        }
-
-        private void ActionGetAttackPointPosition()
-        {
-            if (_npc.FaceDirection == -1)
-            {
-                _npcAttackPoint.transform.localPosition = new Vector2(_attackPointPosition.x, _attackPointPosition.y);
-            }
-            else
-            {
-                _npcAttackPoint.transform.localPosition = new Vector2(-_attackPointPosition.x, _attackPointPosition.y);
             }
         }
 
@@ -155,7 +138,7 @@ namespace DestinyBlade
 
             if (_npcSight)
             {
-                _attackTarget = _npcSight.collider.transform.root.GetComponent<Destructible>();
+                _attackTarget = _npcSight.collider.transform.root.GetComponent<Fighter>();
 
                 if (_attackTarget != null)
                 {
@@ -188,11 +171,11 @@ namespace DestinyBlade
             {
                 if (_npc.StaminaUsage() == false) return;
 
+                _npc.IsAttacking = true;
+
                 _attackTimer = _npc.AttackRate;
 
                 _npcAnimator.SetTrigger("attack");
-
-                _npc.IsAttacking = true;
             }
         }
 
@@ -200,9 +183,9 @@ namespace DestinyBlade
         {
             _npc.IsBlocking = false;
 
-            if (_attackTimer >= 0) return;
+            if (_attackTimer >= 0 || _attackTarget == null) return;
 
-            if (Input.GetMouseButton(1) == true && _groundSensor.IsTriggered == true)
+            if (_attackTarget.IsAttacking && _groundSensor.IsTriggered == true)
             {
                 _npcAnimator.SetBool("isBlocking", true);
 
