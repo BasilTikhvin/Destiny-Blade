@@ -52,7 +52,7 @@ namespace DestinyBlade
 
         private void UpdateRigidbody()
         {
-            _rigidbody.AddForce(new Vector2(HorizontalDirection * _moveSpeed * Time.fixedDeltaTime, 0));
+            _rigidbody.AddForce(new Vector2(_moveSpeed * HorizontalDirection * Time.fixedDeltaTime, 0));
             _rigidbody.AddForce(new Vector2(-_rigidbody.velocity.x * (_moveSpeed - _maxMoveSpeed) * Time.fixedDeltaTime, 0));
 
             _rigidbody.AddForce(new Vector2(0, _jumpForce * VerticalDirection));

@@ -157,7 +157,14 @@ namespace DestinyBlade
                 {
                     if (_npc.IsAttacking)
                     {
-                        _npcAttackPoint.MeleeAttack(_npc.MaxAttackCombo, _npc.FaceDirection);
+                        if (_npcAttackPoint.AttackType == AttackPoint.FightDistance.Melee)
+                        {
+                            _npcAttackPoint.MeleeAttack(_npc.MaxAttackCombo, _npc.FaceDirection);
+                        }
+                        else
+                        {
+                            _npcAttackPoint.DistantAttack(_npc.FaceDirection);
+                        }
                     }
 
                     _npc.IsAttacking = false;
@@ -167,7 +174,7 @@ namespace DestinyBlade
 
             if (_attackTarget == null) return;
 
-            if (_groundSensor.IsTriggered == true && Vector2.Distance(_npc.transform.position, _attackTarget.transform.position) < _npcAttackPoint.AttackRangeRadius * 2)
+            if (_groundSensor.IsTriggered == true && Vector2.Distance(_npcAttackPoint.transform.position, _attackTarget.transform.position) < _npcAttackPoint.AttackRangeRadius)
             {
                 if (_npc.StaminaUsage() == false) return;
 

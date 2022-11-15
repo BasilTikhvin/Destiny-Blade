@@ -5,7 +5,17 @@ namespace DestinyBlade
     [RequireComponent(typeof(Transform))]
     public class AttackPoint : MonoBehaviour
     {
+        public enum FightDistance
+        {
+            Melee,
+            Distant
+        }
+
+        [SerializeField] private FightDistance _attackType;
+        public FightDistance AttackType => _attackType;
+
         [SerializeField] private LayerMask _enemyLayerMask;
+        [SerializeField] private Arrow _arrowPrefab;
         [SerializeField] private int _attackDamage;
         [SerializeField] private float _attackRangeRadius;
         public float AttackRangeRadius => _attackRangeRadius;
@@ -45,6 +55,15 @@ namespace DestinyBlade
                     }
                 }
             }
+        }
+
+        public void DistantAttack(int attackerFaceDirection)
+        {
+            Arrow _arrow = Instantiate(_arrowPrefab).GetComponent<Arrow>();
+
+            _arrow.SetArrowDirection(attackerFaceDirection);
+
+            _arrow.transform.position = transform.position;
         }
 
 #if UNITY_EDITOR
