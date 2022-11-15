@@ -10,7 +10,6 @@ namespace DestinyBlade
         [SerializeField] private int _damage;
 
         private Rigidbody2D _rigidbody;
-        private Vector2 _startPosition;
         private int _direction;
         private Fighter _target;
 
@@ -18,16 +17,7 @@ namespace DestinyBlade
         {
             _rigidbody = transform.GetComponent<Rigidbody2D>();
 
-            _startPosition = transform.position;
-        }
-
-        private void FixedUpdate()
-        {
-            if ( _speed < 0) return;
-
-            _rigidbody.AddForce(new Vector2(_direction * _speed, _speed / 3));
-
-            _speed -= Vector2.Distance(_startPosition, transform.position) + Time.fixedDeltaTime;
+            _rigidbody.AddForce(new Vector2(_direction * _speed, _speed / 10), ForceMode2D.Impulse);
         }
 
         private void OnTriggerEnter2D(Collider2D collision)
@@ -48,7 +38,6 @@ namespace DestinyBlade
                     _target.TakeDamage(_damage);
                 }
             }
-
             Destroy(gameObject);
         }
 

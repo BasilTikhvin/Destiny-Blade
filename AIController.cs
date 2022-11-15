@@ -74,7 +74,7 @@ namespace DestinyBlade
 
         private void ActionUpdateMovePoint()
         {
-            if (_attackTarget != null)
+            if (_attackTarget != null && _attackTimer <= 0)
             {
                 _movePoint = _attackTarget.transform.position + (transform.right * _npc.FaceDirection);
 
@@ -101,14 +101,20 @@ namespace DestinyBlade
             {
                 _movePoint = _patrolRoute[_nextPatrolPoint].transform.position;
             }
-
             ActionMove();
         }
 
         private void ActionMove()
         {
-            if (_npc.IsAttacking || _npc.IsBlocking || _npc.CurrentStamina < _minMoveStamina) return;
+            if (_attackTimer >= 0 || _npc.IsBlocking || _npc.CurrentStamina < _minMoveStamina) return;
 
+            SetDirection();
+
+            _npcAnimator.SetBool("isRunning", true);
+        }
+
+        private void SetDirection()
+        {
             if ((_movePoint.x - _npc.transform.position.x) > 0)
             {
                 _npc.FaceDirection = 1;
@@ -116,34 +122,26 @@ namespace DestinyBlade
                 _npc.HorizontalDirection = 1;
 
                 _npcTransform.localScale = new Vector3(1, 1, 1);
-
-                _npcAnimator.SetBool("isRunning", true);
             }
-
-            if ((_movePoint.x - _npc.transform.position.x) < 0)
+            else
             {
                 _npc.FaceDirection = -1;
 
                 _npc.HorizontalDirection = -1;
 
                 _npcTransform.localScale = new Vector3(-1, 1, 1);
-
-                _npcAnimator.SetBool("isRunning", true);
             }
-        }
+        }    
 
         private void ActionFindAttackTarget()
         {
+            if (_attackTarget != null) return;
+
             _npcSight = Physics2D.Raycast(transform.position, transform.position + (_npc.FaceDirection * _npcSightDistance * transform.right), 5, _enemyLayerMask);
 
             if (_npcSight)
             {
                 _attackTarget = _npcSight.collider.transform.root.GetComponent<Fighter>();
-
-                if (_attackTarget != null)
-                {
-                    _movePoint = _attackTarget.transform.position + (transform.right * _npc.FaceDirection);
-                }
             }
         }
 
@@ -157,7 +155,7 @@ namespace DestinyBlade
                 {
                     if (_npc.IsAttacking)
                     {
-                        if (_npcAttackPoint.AttackType == AttackPoint.FightDistance.Melee)
+                        if (_npcAttackPoint.FighterAttackType == AttackPoint.AttackType.Melee)
                         {
                             _npcAttackPoint.MeleeAttack(_npc.MaxAttackCombo, _npc.FaceDirection);
                         }
@@ -166,7 +164,6 @@ namespace DestinyBlade
                             _npcAttackPoint.DistantAttack(_npc.FaceDirection);
                         }
                     }
-
                     _npc.IsAttacking = false;
                 }
                 return;
@@ -177,6 +174,8 @@ namespace DestinyBlade
             if (_groundSensor.IsTriggered == true && Vector2.Distance(_npcAttackPoint.transform.position, _attackTarget.transform.position) < _npcAttackPoint.AttackRangeRadius)
             {
                 if (_npc.StaminaUsage() == false) return;
+
+                SetDirection();
 
                 _npc.IsAttacking = true;
 
@@ -192,7 +191,7 @@ namespace DestinyBlade
 
             if (_attackTimer >= 0 || _attackTarget == null) return;
 
-            if (_attackTarget.IsAttacking && _groundSensor.IsTriggered == true)
+            if (_groundSensor.IsTriggered == true)
             {
                 _npcAnimator.SetBool("isBlocking", true);
 

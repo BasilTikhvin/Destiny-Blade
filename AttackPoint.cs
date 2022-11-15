@@ -5,14 +5,14 @@ namespace DestinyBlade
     [RequireComponent(typeof(Transform))]
     public class AttackPoint : MonoBehaviour
     {
-        public enum FightDistance
+        public enum AttackType
         {
             Melee,
             Distant
         }
 
-        [SerializeField] private FightDistance _attackType;
-        public FightDistance AttackType => _attackType;
+        [SerializeField] private AttackType _fighterAttackType;
+        public AttackType FighterAttackType => _fighterAttackType;
 
         [SerializeField] private LayerMask _enemyLayerMask;
         [SerializeField] private Arrow _arrowPrefab;
