@@ -1,3 +1,4 @@
+using DestinyBlade;
 using UnityEngine;
 
 public class CameraController : MonoBehaviour
@@ -8,6 +9,13 @@ public class CameraController : MonoBehaviour
     [SerializeField] private Transform _rightBorder;
     [SerializeField] private float _cameraOffsetX;
     [SerializeField] private float _cameraOffsetY;
+
+    private Vector3 _startPosition;
+
+    private void Start()
+    {
+        _startPosition = _camera.transform.position;
+    }
 
     private void FixedUpdate()
     {
@@ -25,5 +33,12 @@ public class CameraController : MonoBehaviour
         {
             _camera.transform.position = new Vector3(_target.transform.position.x, _camera.transform.position.y, _camera.transform.position.z);
         }
+    }
+
+    public void SetTarget(Transform target)
+    {
+        _target = target;
+
+        _camera.transform.position = _startPosition;
     }
 }

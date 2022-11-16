@@ -5,11 +5,11 @@ namespace DestinyBlade
     public class MovementController : MonoBehaviour
     {
         [SerializeField] private Fighter _player;
-        [SerializeField] private Animator _playerAnimator;
-        [SerializeField] private Sensor _groundSensor;
-        [SerializeField] private AttackPoint _playerAttackPoint;
-
+        
         private Transform _playerTransform;
+        private Animator _playerAnimator;
+        private Sensor _groundSensor;
+        private AttackPoint _playerAttackPoint;
 
         private int _currentAttack;
         private float _attackTimer;
@@ -18,11 +18,9 @@ namespace DestinyBlade
 
         private void Start()
         {
-            _playerTransform = _player.GetComponent<Transform>();
+            GetComponents(_player);
 
             enabled = true;
-
-            //_target.EventOnDeath.AddListener(OnDeath);
         }
 
         private void Update()
@@ -158,7 +156,6 @@ namespace DestinyBlade
                     {
                         _playerAttackPoint.MeleeAttack(_currentAttack, _player.FaceDirection);
                     }
-
                     _player.IsAttacking = false;
                 }
                 if (_attackTimer < 0.4f)
@@ -183,7 +180,6 @@ namespace DestinyBlade
                 {
                     _currentAttack = 1;
                 }
-
                 _playerAnimator.SetTrigger("attack" + _currentAttack);
             }
         }
@@ -200,6 +196,30 @@ namespace DestinyBlade
 
                 _player.IsBlocking = true;
             }
+        }
+
+        private void OnDeath()
+        {
+            _player.EventOnDeath.RemoveListener(OnDeath);
+
+            _playerAnimator.SetTrigger("dead");
+        }
+
+        public void SetPlayer(Fighter player)
+        {
+            _player = player;
+
+            GetComponents(player);
+        }
+
+        private void GetComponents(Fighter player)
+        {
+            //_player.EventOnDeath.AddListener(OnDeath);
+
+            _playerTransform = player.GetComponent<Transform>();
+            _playerAnimator = player.GetComponentInChildren<Animator>();
+            _groundSensor = player.GetComponentInChildren<Sensor>();
+            _playerAttackPoint = player.GetComponentInChildren<AttackPoint>();
         }
     }
 }

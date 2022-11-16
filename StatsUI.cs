@@ -19,5 +19,10 @@ public class StatsUI : MonoBehaviour
             _healthBar.fillAmount = Mathf.InverseLerp(0f, _player.MaxHitPoints, _player.CurrentHitPoints);
             _staminaBar.fillAmount = Mathf.InverseLerp(0f, _player.MaxStamina, _player.CurrentStamina);
         }
+
+        public void SetPlayer(Fighter player)
+        {
+            _player = player;
+        }
     }
 }
