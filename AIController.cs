@@ -18,9 +18,8 @@ namespace DestinyBlade
         [SerializeField] private float _npcSightDistance;
         [SerializeField] private float _minMoveStamina;
 
-        private Transform _npcTransform;
-
         private Fighter _npc;
+        private Transform _npcTransform;
         private Animator _npcAnimator;
 
         private int _nextPatrolPoint;
@@ -74,7 +73,7 @@ namespace DestinyBlade
 
         private void ActionUpdateMovePoint()
         {
-            if (_attackTarget != null && _attackTimer <= 0)
+            if (_attackTarget != null)
             {
                 _movePoint = _attackTarget.transform.position + (transform.right * _npc.FaceDirection);
 
@@ -108,14 +107,14 @@ namespace DestinyBlade
         {
             if (_attackTimer >= 0 || _npc.IsBlocking || _npc.CurrentStamina < _minMoveStamina) return;
 
-            SetDirection();
+            SetDirection(_movePoint);
 
             _npcAnimator.SetBool("isRunning", true);
         }
 
-        private void SetDirection()
+        private void SetDirection(Vector2 point)
         {
-            if ((_movePoint.x - _npc.transform.position.x) > 0)
+            if ((point.x - _npc.transform.position.x) > 0)
             {
                 _npc.FaceDirection = 1;
 
@@ -175,7 +174,7 @@ namespace DestinyBlade
             {
                 if (_npc.StaminaUsage() == false) return;
 
-                SetDirection();
+                SetDirection(_attackTarget.transform.position);
 
                 _npc.IsAttacking = true;
 

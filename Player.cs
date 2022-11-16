@@ -10,7 +10,8 @@ namespace DestinyBlade
         [SerializeField] private Fighter _playerPrefab;
         [SerializeField] private CameraController _camera;
         [SerializeField] private MovementController _movementController;
-        [SerializeField] private StatsUI _statsUI;
+        [SerializeField] private PlayerStatsUI _statsUI;
+        [SerializeField] private LevelPassArea _levelPassArea;
 
         private void Start()
         {
@@ -26,6 +27,7 @@ namespace DestinyBlade
             _camera.SetTarget(_player.transform);
             _movementController.SetPlayer(_player);
             _statsUI.SetPlayer(_player);
+            _levelPassArea.SetPlayer(_player);
 
             _player.EventOnDeath.AddListener(OnDeath);
         }

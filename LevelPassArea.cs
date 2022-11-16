@@ -27,5 +27,10 @@ namespace DestinyBlade
                 _levelPassed = true;
             }
         }
+
+        public void SetPlayer(Fighter player)
+        {
+            _player = player;
+        }
     }
 }

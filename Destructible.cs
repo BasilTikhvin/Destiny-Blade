@@ -45,7 +45,7 @@ namespace DestinyBlade
         {
             EventOnDeath.Invoke();
 
-            Destroy(gameObject, 3f);
+            Destroy(gameObject);
         }
     }
 }

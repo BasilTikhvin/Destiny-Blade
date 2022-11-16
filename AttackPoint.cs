@@ -29,7 +29,7 @@ namespace DestinyBlade
 
             foreach (Collider2D enemy in hitEnemies)
             {
-                _targetFighter = enemy.transform.root.GetComponent<Fighter>();
+                _targetFighter = enemy.transform.parent.GetComponent<Fighter>();
 
                 if (_targetFighter != null)
                 {
@@ -47,7 +47,7 @@ namespace DestinyBlade
                 }
                 else
                 {
-                    _targetOther = enemy.transform.root.GetComponent<Destructible>();
+                    _targetOther = enemy.transform.parent.GetComponent<Destructible>();
 
                     if (_targetOther != null)
                     {
