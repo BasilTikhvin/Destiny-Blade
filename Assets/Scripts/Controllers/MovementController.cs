@@ -25,7 +25,10 @@ namespace DestinyBlade
 
         private void Update()
         {
-            UpdateMovement();
+            if (Time.timeScale > 0)
+            {
+                UpdateMovement();
+            }
         }
 
         private void UpdateMovement()

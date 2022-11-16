@@ -10,7 +10,7 @@ namespace DestinyBlade
         [SerializeField] private Fighter _playerPrefab;
         [SerializeField] private CameraController _camera;
         [SerializeField] private MovementController _movementController;
-        [SerializeField] private PlayerStatsUI _statsUI;
+        [SerializeField] private GameUI _statsUI;
         [SerializeField] private LevelPassArea _levelPassArea;
 
         private void Start()
