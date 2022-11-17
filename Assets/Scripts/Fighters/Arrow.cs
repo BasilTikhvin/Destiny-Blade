@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 namespace DestinyBlade
@@ -7,42 +8,52 @@ namespace DestinyBlade
     {
         [SerializeField] private float _speed;
         [SerializeField] private int _damage;
+        private LayerMask _enemyLayerMask;
 
         private Rigidbody2D _rigidbody;
         private int _direction;
         private Fighter _target;
+        private float stepLenght;
 
         private void Start()
         {
             _rigidbody = transform.GetComponent<Rigidbody2D>();
 
+            transform.localScale = new Vector3(_direction, 1, 1);
+
             _rigidbody.AddForce(new Vector2(_direction * _speed, _speed / 10), ForceMode2D.Impulse);
         }
 
-        private void OnTriggerEnter2D(Collider2D collision)
+        private void FixedUpdate()
         {
-            _target = collision.transform.root.GetComponent<Fighter>();
+            stepLenght = _speed * Time.fixedDeltaTime;
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, _direction * stepLenght * transform.right, stepLenght, _enemyLayerMask);
 
-            if (_target != null)
+            if (hit)
             {
-                if (_target.IsBlocking && _target.FaceDirection != _direction)
+                if (hit.collider.TryGetComponent(out _target))
                 {
-                    if (_target.StaminaUsage() == false)
+                    if (_target.IsBlocking && _target.FaceDirection != _direction)
+                    {
+                        if (_target.StaminaUsage() == false)
+                        {
+                            _target.TakeDamage(_damage);
+                        }
+                    }
+                    else
                     {
                         _target.TakeDamage(_damage);
                     }
                 }
-                else
-                {
-                    _target.TakeDamage(_damage);
-                }
+                Destroy(gameObject);
             }
-            Destroy(gameObject);
         }
 
-        public void SetArrowDirection(int attackerFaceDirection)
+        public void SetArrowSettings(int attackerFaceDirection, LayerMask enemyLayerMask)
         {
             _direction = attackerFaceDirection;
+
+            _enemyLayerMask = enemyLayerMask;
         }
     }
 }

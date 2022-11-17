@@ -2,6 +2,7 @@ using UnityEngine;
 
 namespace DestinyBlade
 {
+    [RequireComponent(typeof(Fighter))]
     public class AIController : MonoBehaviour
     {
         public enum AIType
@@ -140,7 +141,7 @@ namespace DestinyBlade
 
             if (_npcSight)
             {
-                _attackTarget = _npcSight.collider.transform.root.GetComponent<Fighter>();
+                _npcSight.collider.TryGetComponent(out _attackTarget);
             }
         }
 

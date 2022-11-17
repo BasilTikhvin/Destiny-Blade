@@ -29,9 +29,7 @@ namespace DestinyBlade
 
             foreach (Collider2D enemy in hitEnemies)
             {
-                _targetFighter = enemy.transform.parent.GetComponent<Fighter>();
-
-                if (_targetFighter != null)
+                if (enemy.TryGetComponent(out _targetFighter))
                 {
                     if (_targetFighter.IsBlocking && _targetFighter.FaceDirection != attackerFaceDirection)
                     {
@@ -47,9 +45,7 @@ namespace DestinyBlade
                 }
                 else
                 {
-                    _targetOther = enemy.transform.parent.GetComponent<Destructible>();
-
-                    if (_targetOther != null)
+                    if (enemy.TryGetComponent(out _targetOther))
                     {
                         _targetOther.TakeDamage(_attackDamage * damageMultuplier);
                     }
@@ -61,7 +57,7 @@ namespace DestinyBlade
         {
             Arrow _arrow = Instantiate(_arrowPrefab).GetComponent<Arrow>();
 
-            _arrow.SetArrowDirection(attackerFaceDirection);
+            _arrow.SetArrowSettings(attackerFaceDirection, _enemyLayerMask);
 
             _arrow.transform.position = transform.position;
         }

@@ -18,7 +18,7 @@ namespace DestinyBlade
 
         private void OnTriggerEnter2D(Collider2D collision)
         {
-            if (collision.transform.root.GetComponent<Fighter>() == _player)
+            if (collision.TryGetComponent(out _player))
             {
                 _player.HorizontalDirection = 1;
 
