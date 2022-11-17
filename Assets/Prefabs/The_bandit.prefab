@@ -155,7 +155,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   _arrowPrefab: {fileID: 0}
-  _attackDamage: 20
+  _attackDamage: 21
   _attackRangeRadius: 0.4
 --- !u!1 &3588909398547381538
 GameObject:

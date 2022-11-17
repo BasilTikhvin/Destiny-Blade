@@ -1,44 +1,53 @@
-using DestinyBlade;
 using UnityEngine;
 
-public class CameraController : MonoBehaviour
+namespace DestinyBlade
 {
-    [SerializeField] private Camera _camera;
-    [SerializeField] private Transform _target;
-    [SerializeField] private Transform _leftBorder;
-    [SerializeField] private Transform _rightBorder;
-    [SerializeField] private float _cameraOffsetX;
-    [SerializeField] private float _cameraOffsetY;
-
-    private Vector3 _startPosition;
-
-    private void Start()
+    public class CameraController : MonoBehaviour
     {
-        _startPosition = _camera.transform.position;
-    }
+        [SerializeField] private Camera _camera;
+        [SerializeField] private Transform _target;
+        [SerializeField] private Transform _leftBorder;
+        [SerializeField] private Transform _rightBorder;
 
-    private void FixedUpdate()
-    {
-        if (_camera == null || _target == null) return;
+        private Vector2 _screenResolution;
+        private Vector2 _cameraOffset;
+        private Vector3 _cameraStartPosition;
 
-        if (_target.transform.position.x < _leftBorder.transform.position.x + _cameraOffsetX)
+        private void Start()
         {
-            _camera.transform.position = new Vector3(_camera.transform.position.x, _camera.transform.position.y, _camera.transform.position.z);
-        }
-        else if (_target.transform.position.x > _rightBorder.transform.position.x - _cameraOffsetX)
-        {
-            _camera.transform.position = new Vector3(_camera.transform.position.x, _camera.transform.position.y, _camera.transform.position.z);
-        }
-        else
-        {
-            _camera.transform.position = new Vector3(_target.transform.position.x, _camera.transform.position.y, _camera.transform.position.z);
-        }
-    }
+            _screenResolution.x = Screen.width;
+            _screenResolution.y = Screen.height;
 
-    public void SetTarget(Transform target)
-    {
-        _target = target;
+            _cameraOffset = _camera.ScreenToWorldPoint(_screenResolution);
+            _cameraStartPosition = new Vector3(_leftBorder.transform.position.x + _cameraOffset.x, -1, _camera.transform.position.z);
+            _camera.transform.position = _cameraStartPosition;
 
-        _camera.transform.position = _startPosition;
+            _camera.orthographicSize = 4;
+        }
+
+        private void FixedUpdate()
+        {
+            if (_camera == null || _target == null) return;
+
+            if (_target.transform.position.x < _leftBorder.transform.position.x + _cameraOffset.x)
+            {
+                _camera.transform.position = new Vector3(_camera.transform.position.x, -1, _camera.transform.position.z);
+            }
+            else if (_target.transform.position.x > _rightBorder.transform.position.x - _cameraOffset.x)
+            {
+                _camera.transform.position = new Vector3(_camera.transform.position.x, -1, _camera.transform.position.z);
+            }
+            else
+            {
+                _camera.transform.position = new Vector3(_target.transform.position.x, -1, _camera.transform.position.z);
+            }
+        }
+
+        public void SetTarget(Transform target)
+        {
+            _target = target;
+
+            _camera.transform.position = _cameraStartPosition;
+        }
     }
 }
