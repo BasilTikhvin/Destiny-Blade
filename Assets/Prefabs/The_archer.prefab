@@ -56,7 +56,7 @@ MonoBehaviour:
   _patrolRoute: []
   _npcAttackPoint: {fileID: 4855874148661645181}
   _groundSensor: {fileID: 3118040666585029078}
-  _npcSightDistance: 50
+  _npcSightDistance: 5
   _minMoveStamina: 30
 --- !u!114 &7812849651006973826
 MonoBehaviour:
@@ -71,7 +71,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _indestructible: 0
-  _maxHitPoints: 100
+  _maxHitPoints: 75
   EventOnDeath:
     m_PersistentCalls:
       m_Calls: []

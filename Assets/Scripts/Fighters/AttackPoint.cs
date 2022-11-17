@@ -31,7 +31,7 @@ namespace DestinyBlade
             {
                 if (enemy.TryGetComponent(out _targetFighter))
                 {
-                    if (_targetFighter.IsBlocking && _targetFighter.FaceDirection != attackerFaceDirection)
+                    if (_targetFighter.IsBlocking && _targetFighter.transform.localScale.x != attackerFaceDirection)
                     {
                         if (_targetFighter.StaminaUsage() == false)
                         {

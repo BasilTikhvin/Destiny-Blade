@@ -58,7 +58,7 @@ MonoBehaviour:
   - {fileID: 0}
   _npcAttackPoint: {fileID: 6478525566583909263}
   _groundSensor: {fileID: 3588909398547381540}
-  _npcSightDistance: 50
+  _npcSightDistance: 5
   _minMoveStamina: 55
 --- !u!114 &8567832480171803504
 MonoBehaviour:

@@ -48,15 +48,6 @@ namespace DestinyBlade
 
         private void Idle()
         {
-            if (_playerTransform.localScale.x == 1)
-            {
-                _player.FaceDirection = 1;
-            }
-            else
-            {
-                _player.FaceDirection = -1;
-            }
-
             _player.HorizontalDirection = 0;
 
             _playerAnimator.SetBool("isRunning", false);
@@ -72,8 +63,6 @@ namespace DestinyBlade
 
             if (Input.GetKey(KeyCode.D) == true)
             {
-                _player.FaceDirection = 1;
-
                 _player.HorizontalDirection = 1;
 
                 _playerTransform.localScale = new Vector3(1, 1, 1);
@@ -83,8 +72,6 @@ namespace DestinyBlade
 
             if (Input.GetKey(KeyCode.A) == true)
             {
-                _player.FaceDirection = -1;
-
                 _player.HorizontalDirection = -1;
 
                 _playerTransform.localScale = new Vector3(-1, 1, 1);
@@ -157,7 +144,7 @@ namespace DestinyBlade
                 {
                     if (_player.IsAttacking)
                     {
-                        _playerAttackPoint.MeleeAttack(_currentAttack, _player.FaceDirection);
+                        _playerAttackPoint.MeleeAttack(_currentAttack, (int)_player.transform.localScale.x);
                     }
                     _player.IsAttacking = false;
                 }

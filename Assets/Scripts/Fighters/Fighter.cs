@@ -20,11 +20,10 @@ namespace DestinyBlade
         [SerializeField] private float _maxMoveSpeed;
         [SerializeField] private float _jumpForce;
         [SerializeField] private float _rollForce;
-        public int FaceDirection { get; set; }
+        private Rigidbody2D _rigidbody;
         public int HorizontalDirection { get; set; }
         public int VerticalDirection { get; set; }
         public int RollDirection { get; set; }
-        private Rigidbody2D _rigidbody;
 
         [Header("Combat")]
         [SerializeField] private float _attackRate;
@@ -40,7 +39,7 @@ namespace DestinyBlade
 
             _currentStamina = _maxStamina;
 
-            _rigidbody = transform.root.GetComponent<Rigidbody2D>();
+            _rigidbody = transform.GetComponent<Rigidbody2D>();
         }
 
         private void FixedUpdate()

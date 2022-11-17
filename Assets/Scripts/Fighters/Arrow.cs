@@ -33,7 +33,7 @@ namespace DestinyBlade
             {
                 if (hit.collider.TryGetComponent(out _target))
                 {
-                    if (_target.IsBlocking && _target.FaceDirection != _direction)
+                    if (_target.IsBlocking && _target.transform.localScale.x != _direction)
                     {
                         if (_target.StaminaUsage() == false)
                         {

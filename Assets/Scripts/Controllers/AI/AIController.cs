@@ -54,15 +54,6 @@ namespace DestinyBlade
 
         private void ActionIdle()
         {
-            if (_npcTransform.localScale.x == 1)
-            {
-                _npc.FaceDirection = 1;
-            }
-            else
-            {
-                _npc.FaceDirection = -1;
-            }
-
             _npc.HorizontalDirection = 0;
 
             _npcAnimator.SetBool("isRunning", false);
@@ -76,7 +67,7 @@ namespace DestinyBlade
         {
             if (_attackTarget != null)
             {
-                _movePoint = _attackTarget.transform.position + (transform.right * _npc.FaceDirection);
+                _movePoint = _attackTarget.transform.position + (transform.right * _npc.transform.localScale.x);
 
                 ActionMove();
 
@@ -117,16 +108,12 @@ namespace DestinyBlade
         {
             if ((point.x - _npc.transform.position.x) > 0)
             {
-                _npc.FaceDirection = 1;
-
                 _npc.HorizontalDirection = 1;
 
                 _npcTransform.localScale = new Vector3(1, 1, 1);
             }
             else
             {
-                _npc.FaceDirection = -1;
-
                 _npc.HorizontalDirection = -1;
 
                 _npcTransform.localScale = new Vector3(-1, 1, 1);
@@ -137,7 +124,7 @@ namespace DestinyBlade
         {
             if (_attackTarget != null) return;
 
-            _npcSight = Physics2D.Raycast(transform.position, transform.position + (_npc.FaceDirection * _npcSightDistance * transform.right), 5, _enemyLayerMask);
+            _npcSight = Physics2D.Raycast(transform.position, _npc.transform.localScale.x * transform.right, _npcSightDistance, _enemyLayerMask);
 
             if (_npcSight)
             {
@@ -157,11 +144,11 @@ namespace DestinyBlade
                     {
                         if (_npcAttackPoint.FighterAttackType == AttackPoint.AttackType.Melee)
                         {
-                            _npcAttackPoint.MeleeAttack(_npc.MaxAttackCombo, _npc.FaceDirection);
+                            _npcAttackPoint.MeleeAttack(_npc.MaxAttackCombo, (int)_npc.transform.localScale.x);
                         }
                         else
                         {
-                            _npcAttackPoint.DistantAttack(_npc.FaceDirection);
+                            _npcAttackPoint.DistantAttack((int)_npc.transform.localScale.x);
                         }
                     }
                     _npc.IsAttacking = false;
