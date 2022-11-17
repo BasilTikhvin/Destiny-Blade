@@ -1,4 +1,4 @@
-# Destiny-Blade
+# Destiny Blade
 
 ## Простой платформер на основе UNITY (2D, C#)
 
