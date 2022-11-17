@@ -104,22 +104,6 @@ namespace DestinyBlade
             _npcAnimator.SetBool("isRunning", true);
         }
 
-        private void SetDirection(Vector2 point)
-        {
-            if ((point.x - _npc.transform.position.x) > 0)
-            {
-                _npc.HorizontalDirection = 1;
-
-                _npcTransform.localScale = new Vector3(1, 1, 1);
-            }
-            else
-            {
-                _npc.HorizontalDirection = -1;
-
-                _npcTransform.localScale = new Vector3(-1, 1, 1);
-            }
-        }    
-
         private void ActionFindAttackTarget()
         {
             if (_attackTarget != null) return;
@@ -186,11 +170,27 @@ namespace DestinyBlade
             }
         }
 
+        private void SetDirection(Vector2 point)
+        {
+            if ((point.x - _npc.transform.position.x) > 0)
+            {
+                _npc.HorizontalDirection = 1;
+
+                _npcTransform.localScale = new Vector3(1, 1, 1);
+            }
+            else
+            {
+                _npc.HorizontalDirection = -1;
+
+                _npcTransform.localScale = new Vector3(-1, 1, 1);
+            }
+        }
+
         private void ActionOnDeath()
         {
             _npc.EventOnDeath.RemoveListener(ActionOnDeath);
 
-            _npcAnimator.SetTrigger("dead");
+            _npcAnimator.SetBool("isDead", true);
 
             enabled = false;
             _npc.enabled = false;

@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 
 namespace DestinyBlade
@@ -14,6 +13,7 @@ namespace DestinyBlade
         private int _direction;
         private Fighter _target;
         private float stepLenght;
+        RaycastHit2D hit;
 
         private void Start()
         {
@@ -27,7 +27,8 @@ namespace DestinyBlade
         private void FixedUpdate()
         {
             stepLenght = _speed * Time.fixedDeltaTime;
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, _direction * stepLenght * transform.right, stepLenght, _enemyLayerMask);
+            
+            hit = Physics2D.Raycast(transform.position, _direction * stepLenght * transform.right, stepLenght, _enemyLayerMask);
 
             if (hit)
             {
