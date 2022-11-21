@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2379962467415869252}
   - component: {fileID: 8567832480171803504}
   - component: {fileID: 8823102532314282878}
-  - component: {fileID: 8576390020887688309}
+  - component: {fileID: 8175625790534484724}
   m_Layer: 7
   m_Name: The_bandit
   m_TagString: Untagged
@@ -108,8 +108,8 @@ Rigidbody2D:
   m_SleepingMode: 0
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!61 &8576390020887688309
-BoxCollider2D:
+--- !u!70 &8175625790534484724
+CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -122,18 +122,8 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: -0.04}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
-    oldSize: {x: 1.5, y: 1.5}
-    newSize: {x: 1.5, y: 1.5}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 1
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
   m_Size: {x: 0.5, y: 1}
-  m_EdgeRadius: 0
+  m_Direction: 0
 --- !u!1 &2543314994612575323
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,7 +221,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.05
+  m_Radius: 0.1
 --- !u!114 &3588909398547381540
 MonoBehaviour:
   m_ObjectHideFlags: 0
