@@ -1,6 +1,6 @@
 # Destiny Blade
 
-## Простой платформер на основе UNITY (2D, C#)
+## Простой платформер на основе UNITY (2D, C#, версия Unity 2021.3.14f1)
 
 Видео с примером работы - https://www.youtube.com/watch?v=7nR6BNiUvY4&feature=youtu.be&ab_channel=BasilTikhvin
 
